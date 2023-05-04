@@ -4,6 +4,8 @@
 namespace Tests;
 
 use Illuminate\Testing\TestResponse;
+use PHPUnit\Framework\Assert as PHPUnit;
+use PHPUnit\Framework\ExpectationFailedException;
 
 trait MakesJsonApiRequests
 {
@@ -13,18 +15,7 @@ trait MakesJsonApiRequests
 
         TestResponse::macro(
             'assertJsonApiValidationErrors',
-            function($attributes) {
-                /** @var TestResponse  $this*/
-                $this->assertJsonStructure([
-                    'errors' => [
-                        ['title', 'detail', 'source' => ['pointer']]
-                    ]
-                ])->assertJsonFragment([
-                    'source' => ['pointer' => "/data/attributes/{$attributes}"],
-                ])->assertHeader(
-                    'Content-Type', 'application/vnd.api+json'
-                )->assertStatus(422);
-            });
+            $this->assertJsonApiValidationErrors());
 
     }
     public function json($method, $uri, array $data = [], array $headers = []): TestResponse
@@ -50,5 +41,45 @@ trait MakesJsonApiRequests
         $headers['content-type'] = 'application/vnd.api+json';
 
         return parent::patchJson($uri, $data, $headers);
+    }
+
+    /**
+     * @return \Closure
+     */
+    protected function assertJsonApiValidationErrors(): \Closure
+    {
+        return function ($attributes) {
+            /** @var TestResponse $this */
+            try {
+                $this->assertJsonFragment([
+                    'source' => ['pointer' => "/data/attributes/{$attributes}"],
+                ]);
+            } catch (ExpectationFailedException $e) {
+                PHPUnit::fail(
+                    "Failed to find a JSON:API validation error for key: '{$attributes}'"
+                    .PHP_EOL.PHP_EOL.
+                    $e->getMessage()
+                );
+            }
+
+            try {
+                $this->assertJsonStructure([
+                    'errors' => [
+                        ['title', 'detail', 'source' => ['pointer']]
+                    ]
+                ]);
+            } catch (ExpectationFailedException $e) {
+                PHPUnit::fail(
+                    "Failed to find a JSON:API error response"
+                    .PHP_EOL.PHP_EOL.
+                    $e->getMessage()
+                );
+            }
+
+
+            $this->assertHeader(
+                'Content-Type', 'application/vnd.api+json'
+            )->assertStatus(422);
+        };
     }
 }
