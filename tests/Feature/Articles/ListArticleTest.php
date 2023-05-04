@@ -18,7 +18,7 @@ class ListArticleTest extends TestCase
 
          $article = Article::factory()->create();
 
-         $response = $this->getJson('/api/v1/articles/'.$article->getRouteKey());
+         $response = $this->getJson(route('api.v1.articles.show', $article));
 
          $response->assertExactJson([
              'data' => [

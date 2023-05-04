@@ -11,14 +11,18 @@ class ValidateJsonApiHeadersTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Route::any('test_route', fn() => 'Ok')
+            ->middleware(ValidateJsonApiHeaders::class);
+    }
+
     /** @test */
 
     public function accept_header_must_be_present_in_all_requests()
     {
-        Route::get('test_route', function() {
-            return 'Ok';
-        })->middleware(ValidateJsonApiHeaders::class);
-
         $this->get('test_route')->assertStatus(406);
 
         $this->get('test_route', [
@@ -30,9 +34,6 @@ class ValidateJsonApiHeadersTest extends TestCase
 
     public function content_type_header_must_be_present_on_all_posts_request()
     {
-        Route::post('test_route', function() {
-            return 'Ok';
-        })->middleware(ValidateJsonApiHeaders::class);
 
         $this->post('test_route', [], [
             'accept' => 'application/vnd.api+json'
@@ -47,10 +48,6 @@ class ValidateJsonApiHeadersTest extends TestCase
     /** @test */
     public function content_type_header_must_be_present_on_all_patch_request()
     {
-        Route::patch('test_route', function() {
-            return 'Ok';
-        })->middleware(ValidateJsonApiHeaders::class);
-
         $this->patch('test_route', [], [
             'accept' => 'application/vnd.api+json'
         ])->assertStatus(415);
@@ -64,9 +61,7 @@ class ValidateJsonApiHeadersTest extends TestCase
     /** @test */
 
     public function content_type_header_must_be_present_in_responses(){
-        Route::any('test_route', function() {
-            return 'Ok';
-        })->middleware(ValidateJsonApiHeaders::class);
+
 
         $this->get('test_route')->assertStatus(406);
 
@@ -87,9 +82,8 @@ class ValidateJsonApiHeadersTest extends TestCase
 
     /** @test */
     function content_type_header_must_not_be_present_in_empty_responses() {
-        Route::any('empty_response', function() {
-            return response()->noContent();
-        })->middleware(ValidateJsonApiHeaders::class);
+        Route::any('empty_response', fn() => response()->noContent())
+            ->middleware(ValidateJsonApiHeaders::class);
 
         $this->get('empty_response', [
             'accept' => 'application/vnd.api+json'
