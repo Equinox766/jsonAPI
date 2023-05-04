@@ -4,8 +4,6 @@ namespace Tests\Feature\Articles;
 
 use App\Models\Article;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
 class CreateArticleTest extends TestCase
@@ -55,10 +53,10 @@ class CreateArticleTest extends TestCase
     {
         $response = $this->postJson(route('api.v1.articles.store'),
          [
-             'data' => [
+             'data' =>
+                 [
                  'type' => 'articles',
                  'attributes' => [
-
                      'slug'    => 'nuevo-articulo',
                      'content' => 'Contenido del articulo',
                  ]

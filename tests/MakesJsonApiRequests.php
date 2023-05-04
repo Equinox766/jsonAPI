@@ -3,6 +3,8 @@
 
 namespace Tests;
 
+use Closure;
+use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Assert as PHPUnit;
 use PHPUnit\Framework\ExpectationFailedException;
@@ -46,23 +48,29 @@ trait MakesJsonApiRequests
     /**
      * @return \Closure
      */
-    protected function assertJsonApiValidationErrors(): \Closure
+    protected function assertJsonApiValidationErrors(): Closure
     {
-        return function ($attributes) {
+        return function ($attribute) {
             /** @var TestResponse $this */
+
+            $pointer = Str::of($attribute)->startsWith('data')
+                ? "/".str_replace('.','/',$attribute)
+                : "/data/attributes/{$attribute}";
+
             try {
                 $this->assertJsonFragment([
-                    'source' => ['pointer' => "/data/attributes/{$attributes}"],
+                    'source' => ['pointer' => $pointer],
                 ]);
             } catch (ExpectationFailedException $e) {
                 PHPUnit::fail(
-                    "Failed to find a JSON:API validation error for key: '{$attributes}'"
+                    "Failed to find a JSON:API validation error for key: '{$attribute}'"
                     .PHP_EOL.PHP_EOL.
                     $e->getMessage()
                 );
             }
 
             try {
+
                 $this->assertJsonStructure([
                     'errors' => [
                         ['title', 'detail', 'source' => ['pointer']]
@@ -70,12 +78,11 @@ trait MakesJsonApiRequests
                 ]);
             } catch (ExpectationFailedException $e) {
                 PHPUnit::fail(
-                    "Failed to find a JSON:API error response"
+                    "Failed to find a valid JSON:API response error"
                     .PHP_EOL.PHP_EOL.
                     $e->getMessage()
                 );
             }
-
 
             $this->assertHeader(
                 'Content-Type', 'application/vnd.api+json'
