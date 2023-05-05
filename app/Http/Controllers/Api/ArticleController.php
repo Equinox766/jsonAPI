@@ -3,22 +3,26 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Article;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ArticleResource;
 use App\Http\Resources\ArticleCollection;
 use App\Http\Requests\SaveArticleRequest;
+use Illuminate\Support\Str;
 
 class ArticleController extends Controller
 {
-    public function show (Article $article)
+    public function show (Article $article): ArticleResource
     {
         return ArticleResource::make($article);
     }
 
-    public function index (): ArticleCollection
+    public function index (Request $request): ArticleCollection
     {
-        return ArticleCollection::make(Article::all());
+        $articles = Article::allowedSorts(['title', 'content']);
+
+        return ArticleCollection::make($articles->get());
     }
 
     public function store (SaveArticleRequest $request): ArticleResource
@@ -29,7 +33,7 @@ class ArticleController extends Controller
         return ArticleResource::make($article);
     }
 
-    public function update (SaveArticleRequest $request, Article $article)
+    public function update (SaveArticleRequest $request, Article $article): ArticleResource
     {
 
         $article->update($request->validated());

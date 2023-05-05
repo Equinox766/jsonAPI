@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DdlMappings">
+    <mapping uuid="e77e8439-a0c5-48f4-b218-df3b8f813003" name="postgresql://postgres:Mh3Mdf8y5xcc3aH5HhVG@containers-us-west-1.railway.app:5725/railway">
+      <data-sources db="b7c4f084-b3b0-4f9b-82d3-150a8ba1b5c2" />
+    </mapping>
+  </component>
+</project>
