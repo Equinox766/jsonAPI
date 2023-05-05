@@ -44,4 +44,54 @@ class UpdateArticleTest extends TestCase
             ]
         ]);
     }
+
+    /** @test */
+    public function title_is_required()
+    {
+        $article = Article::factory()->create();
+        $this->patchJson(route('api.v1.articles.update', $article),
+            [
+                'slug'    => 'update-article',
+                'content' => 'Updated content',
+            ])->assertJsonApiValidationErrors('title');
+
+    }
+
+
+    /** @test */
+    public function title_must_be_at_least_4_characters()
+    {
+        $article = Article::factory()->create();
+        $this->patchJson(route('api.v1.articles.update', $article),
+            [
+                'title'   => 'Upd',
+                'slug'    => 'update-article',
+                'content' => 'Updated content',
+            ])->assertJsonApiValidationErrors('title');
+
+    }
+
+    /** @test */
+    public function content_is_required()
+    {
+        $article = Article::factory()->create();
+        $this->patchJson(route('api.v1.articles.update', $article),
+            [
+                'title'   => 'Updated Article',
+                'slug'    => 'update-article',
+            ])->assertJsonApiValidationErrors('content');
+
+    }
+
+    /** @test */
+    public function slug_is_required()
+    {
+        $article = Article::factory()->create();
+        $this->patchJson(route('api.v1.articles.update', $article),
+            [
+                'title'   => 'Updated Article',
+                'content' => 'Updated content',
+            ])->assertJsonApiValidationErrors('slug');
+
+    }
 }
