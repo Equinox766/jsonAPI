@@ -44,7 +44,7 @@ class ListArticleTest extends TestCase
 
         $article = Article::factory()->count(3)->create();
         $response = $this->getJson(route('api.v1.articles.index'));
-        $response->assertExactJson([
+        $response->assertJson([
             'data' => [
                 [
                     'type' => 'articles',

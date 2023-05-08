@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ArticleResource;
 use App\Http\Resources\ArticleCollection;
 use App\Http\Requests\SaveArticleRequest;
-use Illuminate\Support\Str;
 
 class ArticleController extends Controller
 {
@@ -20,9 +19,10 @@ class ArticleController extends Controller
 
     public function index (Request $request): ArticleCollection
     {
+        //Se utiliza macro para ordenar con "allowedSorts" y para listar "jsonPginate"
         $articles = Article::allowedSorts(['title', 'content']);
 
-        return ArticleCollection::make($articles->get());
+        return ArticleCollection::make($articles->jsonPaginate());
     }
 
     public function store (SaveArticleRequest $request): ArticleResource
