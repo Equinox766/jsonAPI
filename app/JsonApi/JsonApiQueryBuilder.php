@@ -76,7 +76,6 @@ class JsonApiQueryBuilder
             return $this;
         };
     }
-
     public function getResourceType(): \Closure {
         return function () {
             /** @var Builder $this */

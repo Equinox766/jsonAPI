@@ -35,7 +35,7 @@ class CreateArticleTest extends TestCase
         );
 
 
-         $response->assertExactJson([
+         $response->assertJson([
              'data' => [
                  'type' => 'articles',
                  'id' => (string) $article->getRouteKey(),
@@ -87,16 +87,30 @@ class CreateArticleTest extends TestCase
 
     }
     /** @test */
-//    public function category_relationship_is_required()
-//    {
-//       $this->postJson(route('api.v1.articles.store'),
-//         [
-//             'title'    => 'Nuevo Articulo',
-//             'slug'    => 'nuevo-articulo',
-//             'content'    => 'Contenido del articulo',
-//         ])->assertJsonApiValidationErrors('data.relationships.category.data.id');
-//
-//    }
+    public function category_relationship_is_required()
+    {
+       $this->postJson(route('api.v1.articles.store'),
+         [
+             'title'    => 'Nuevo Articulo',
+             'slug'    => 'nuevo-articulo',
+             'content'    => 'Contenido del articulo',
+         ])->assertJsonApiValidationErrors('relationships.category');
+
+    }
+    /** @test */
+    public function category_must_exist_in_database()
+    {
+       $this->postJson(route('api.v1.articles.store'),
+         [
+             'title'          => 'Nuevo Articulo',
+             'slug'           => 'nuevo-articulo',
+             'content'        => 'Contenido del articulo',
+             '_relationships' => [
+                 'category' =>Category::factory()->make()
+             ]
+         ])->assertJsonApiValidationErrors('relationships.category');
+
+    }
 
     /** @test */
     public function slug_must_be_unique()

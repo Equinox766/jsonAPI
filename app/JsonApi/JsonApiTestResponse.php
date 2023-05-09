@@ -14,9 +14,14 @@ class JsonApiTestResponse
         return function ($attribute) {
             /** @var TestResponse $this */
 
-            $pointer = Str::of($attribute)->startsWith('data')
-                ? "/".str_replace('.','/',$attribute)
-                : "/data/attributes/{$attribute}";
+            $pointer = "/data/attributes/{$attribute}";
+
+            if (Str::of($attribute)->startsWith('data'))
+            {
+                $pointer = "/".str_replace('.','/',$attribute);
+            } elseif (Str::of($attribute)->startsWith('relationships')) {
+                $pointer = "/data/".str_replace('.','/',$attribute).'/data/id';
+            }
 
             try {
                 $this->assertJsonFragment([
@@ -68,7 +73,30 @@ class JsonApiTestResponse
             ])->assertHeader(
                 'Location',
                 route('api.v1.'.$model->getResourceType().'.show', $model)
-            );;
+            );
+        };
+    }
+
+    public function assertJsonApiRelationshipLinks(): \Closure
+    {
+        return function($model, $relations){
+            /** @var TestResponse $this */
+            foreach ($relations as $relation) {
+                $this->assertJson([
+                    'data' => [
+                        'relationships' => [
+                            'category' => [
+                                'links' => [
+                                    'self' => route("api.v1.{$model->getResourceType()}.relationships.{$relation}", $model),
+                                    'related' => route("api.v1.{$model->getResourceType()}.{$relation}", $model)
+
+                                ]
+                            ]
+                        ]
+                    ]
+                ]);
+            }
+            return $this;
         };
     }
     public function assertJsonApiCollection(): \Closure
@@ -97,4 +125,6 @@ class JsonApiTestResponse
            return $this;
         };
     }
+
+
 }
