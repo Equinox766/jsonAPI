@@ -3,6 +3,7 @@
 namespace Tests\Feature\Articles;
 
 use App\Models\Article;
+use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -14,12 +15,16 @@ class CreateArticleTest extends TestCase
 
     public function can_create_articles()
     {
-        $this->withoutExceptionHandling();
+        $category = Category::factory()->create();
+
         $response = $this->postJson(route('api.v1.articles.store'),
          [
              'title'   => 'Nuevo Articulo',
              'slug'    => 'nuevo-articulo',
              'content' => 'Contenido del articulo',
+             '_relationships' => [
+                 'category' => $category
+             ]
          ])->assertCreated();
 
          $article = Article::first();
@@ -81,6 +86,17 @@ class CreateArticleTest extends TestCase
          ])->assertJsonApiValidationErrors('content');
 
     }
+    /** @test */
+//    public function category_relationship_is_required()
+//    {
+//       $this->postJson(route('api.v1.articles.store'),
+//         [
+//             'title'    => 'Nuevo Articulo',
+//             'slug'    => 'nuevo-articulo',
+//             'content'    => 'Contenido del articulo',
+//         ])->assertJsonApiValidationErrors('data.relationships.category.data.id');
+//
+//    }
 
     /** @test */
     public function slug_must_be_unique()

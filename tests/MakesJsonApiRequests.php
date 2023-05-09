@@ -68,6 +68,7 @@ trait MakesJsonApiRequests
         return Document::type($type)
             ->id($id)
             ->attributes($data)
+            ->relationships($data['_relationships'] ?? [])
             ->toArray();
     }
 }

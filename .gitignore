@@ -13,3 +13,4 @@ yarn-error.log
 .blueprint
 draft.yaml
 .idea
+composer.phar
