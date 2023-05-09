@@ -3,6 +3,7 @@
 
 namespace Tests;
 
+use App\JsonApi\Document;
 use Closure;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
@@ -64,12 +65,9 @@ trait MakesJsonApiRequests
         $type = (string) Str::of($path)->after('api/v1/')->before('/');
         $id = (string) Str::of($path)->after($type)->replace('/', '');
 
-        return [
-            'data' => array_filter([
-                'type' => $type,
-                'id' => $id,
-                'attributes' => $data,
-            ])
-        ];
+        return Document::type($type)
+            ->id($id)
+            ->attributes($data)
+            ->toArray();
     }
 }
