@@ -16,6 +16,8 @@ class Category extends Model
      */
     protected $guarded = [];
 
+//    public $resourceType = 'categories';
+
     /**
      * The attributes that should be cast to native types.
      *
@@ -24,6 +26,11 @@ class Category extends Model
     protected $casts = [
         'id' => 'integer',
     ];
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 
     public function articles()
     {
