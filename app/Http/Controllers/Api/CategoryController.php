@@ -18,7 +18,7 @@ class CategoryController extends Controller
         return CategoryResource::make($category);
     }
 
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(): AnonymousResourceCollection
     {
         $categories = Category::jsonPaginate();
 
