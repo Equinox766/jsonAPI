@@ -16,7 +16,7 @@ class AccessTokenTest extends TestCase
 
     public function can_issue_access_tokens()
     {
-//         $this->withoutJsonApiDocumentFormatting();
+         $this->withoutJsonApiDocumentFormatting();
          $user = User::factory()->create();
 
          $response = $this->postJson(route('api.v1.login'), [
@@ -25,11 +25,10 @@ class AccessTokenTest extends TestCase
              'device_name' => 'device_name'
          ]);
 
-//         $token =
-             dd($response->json());
+         $token = $response->json('token');
 
-//         $dbToken = PersonalAccessToken::findToken($token);
+         $dbToken = PersonalAccessToken::findToken($token);
 
-//         $this->assertTrue($dbToken->tokenable->is($user));
+         $this->assertTrue($dbToken->tokenable->is($user));
     }
 }
