@@ -6,9 +6,36 @@ use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Assert as PHPUnit;
 use PHPUnit\Framework\ExpectationFailedException;
+use PHPUnit\Framework\InvalidArgumentException;
 
 class JsonApiTestResponse
 {
+    public function assertJsonApiError(): \Closure
+    {
+        return function($title = null, $detail = null, $status = null) {
+            /** @var TestResponse $this */
+            try {
+                $this->assertJsonStructure([
+                    'errors' => [
+                        '*' => ['title', 'detail']
+                    ]
+                ]);
+            } catch (InvalidArgumentException $e) {
+                PHPUnit::fail(
+                    "Error object MUST be returned as an array keyed by error in the top level of a JSON:API document"
+                    .PHP_EOL.PHP_EOL.
+                    $e->getMessage()
+                );
+            }
+
+            $title && $this->assertJsonFragment(['title' => $title]);
+            $detail && $this->assertJsonFragment(['detail' => $detail]);
+            $status && $this->assertJsonFragment(['status' => $status])
+                ->assertStatus((int) $status);
+
+            return $this;
+        };
+    }
     public function assertJsonApiValidationErrors()
     {
         return function ($attribute) {
@@ -55,7 +82,6 @@ class JsonApiTestResponse
             )->assertStatus(422);
         };
     }
-
     public function assertJsonApiResource(): \Closure
     {
         return function ($model, $attributes) {
@@ -76,7 +102,6 @@ class JsonApiTestResponse
             );
         };
     }
-
     public function assertJsonApiRelationshipLinks(): \Closure
     {
         return function($model, $relations){
