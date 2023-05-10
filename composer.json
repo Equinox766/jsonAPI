@@ -13,6 +13,7 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "illuminate/support": "^9.0",
         "laravel/framework": "^9.0",
+        "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.5"
     },
     "require-dev": {
