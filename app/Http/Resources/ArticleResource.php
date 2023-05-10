@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use App\JsonApi\Traits\JsonApiResource;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ArticleResource extends JsonResource
@@ -20,13 +19,14 @@ class ArticleResource extends JsonResource
 
     public function getRelationshipLinks(): array
     {
-        return ['category'];
+        return ['category', 'author'];
     }
 
     public function getIncludes(): array
     {
         return [
-            CategoryResource::make($this->whenLoaded('category'))
+            CategoryResource::make($this->whenLoaded('category')),
+            AuthorResource::make($this->whenLoaded('author'))
         ];
     }
 }

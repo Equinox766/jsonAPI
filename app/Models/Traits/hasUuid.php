@@ -6,6 +6,10 @@ use Illuminate\Support\Str;
 
 trait hasUuid
 {
+    public function getKeyType()
+    {
+        return 'string';
+    }
     public function getIncrementing()
     {
         return false;
