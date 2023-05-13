@@ -12,5 +12,5 @@ npm-debug.log
 yarn-error.log
 .blueprint
 draft.yaml
-.idea
+/.idea
 composer.phar

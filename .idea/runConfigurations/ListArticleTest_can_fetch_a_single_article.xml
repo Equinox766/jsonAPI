@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="ListArticleTest.can_fetch_a_single_article" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
-    <TestRunner class="Tests\Feature\Articles\ListArticleTest" configuration_file="/opt/project/phpunit.xml" file="$PROJECT_DIR$/tests/Feature/Articles/ListArticleTest.php" method="can_fetch_a_single_article" scope="Class" />
+    <TestRunner class="Tests\Feature\Articles\ListArticleTest" configuration_file="$PROJECT_DIR$/phpunit.xml" file="$PROJECT_DIR$/tests/Feature/Articles/ListArticleTest.php" method="can_fetch_a_single_article" scope="Class" />
     <method v="2" />
   </configuration>
 </component>
