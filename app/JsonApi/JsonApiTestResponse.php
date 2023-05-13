@@ -6,7 +6,6 @@ use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Assert as PHPUnit;
 use PHPUnit\Framework\ExpectationFailedException;
-use PHPUnit\Framework\InvalidArgumentException;
 
 class JsonApiTestResponse
 {
@@ -20,7 +19,7 @@ class JsonApiTestResponse
                         '*' => ['title', 'detail']
                     ]
                 ]);
-            } catch (InvalidArgumentException $e) {
+            } catch (ExpectationFailedException $e) {
                 PHPUnit::fail(
                     "Error object MUST be returned as an array keyed by error in the top level of a JSON:API document"
                     .PHP_EOL.PHP_EOL.

@@ -56,6 +56,7 @@ class ArticleController extends Controller
 
     public function update (SaveArticleRequest $request, Article $article): ArticleResource
     {
+        $this->authorize('update', $article);
 
         $article->update($request->validated());
 
@@ -64,6 +65,9 @@ class ArticleController extends Controller
 
     public function destroy (Article $article): Response
     {
+
+        $this->authorize('delete', $article);
+
         $article->delete();
 
         return response()->noContent();
